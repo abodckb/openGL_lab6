@@ -602,6 +602,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (keys[VK_ESCAPE]) SendMessage(hWnd, WM_CLOSE, 0, 0);
 		// Если ESC - выйти
 	}
-	//myfile.close();
+	//myfile.close(); //close file
 }
 
