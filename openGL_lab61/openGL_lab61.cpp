@@ -208,13 +208,14 @@ void DrawLight(void)
 	int w = 1366;
 	int h = 768;
 
+	//LIGHT0
 	GLfloat light_ambient[] = { 0.0,0.0,0.0,1.0 };
 	GLfloat light_diffuse[] = { 1.0,1.0,1.0,1.0 };
 	GLfloat light_specular[] = { 1.0,1.0,1.0,1.0 };
 	GLfloat light_position[] = { 1.0,1.0,1.0,0.0 };
 
 	GLfloat mat_specular[] = { 1.0,1.0,1.0,1.0 };
-	GLfloat mat_shininess[] = { 90.0 };
+	GLfloat mat_shininess[] = { 50.0 };
 	GLfloat white_light[] = { 1.0,1.0,1.0,1.0 };
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -233,17 +234,192 @@ void DrawLight(void)
 	//glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
+
+	
+	//LIGHT1
+	GLfloat light_ambient1[] = { 0.2,0.2,0.2,1.0 };
+	GLfloat light_diffuse1[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat light_specular1[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat light_position1[] = { -2.0,2.0,1.0,1.0 };
+	GLfloat spot_direction1[] = { -1.0,-1.0,0.0 };
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1);
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.5);
+	glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.5);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.2);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction1);
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0);
+	glEnable(GL_LIGHT1);
+
+
 	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 	glEnable(GL_DEPTH_TEST);
 
 	//gluPerspective(30.0f, (float)1366 / 768, 6.f, 12.0f);
 	//glTranslatef(0.0, 0.0, -1.);
-	//glOrtho(-1.5 * (GLfloat)w / (GLfloat)h, 1.5 * (GLfloat)w / (GLfloat)h, -1.5, 1.5, -10.0, 10.0);
+	glOrtho(-1.5 * (GLfloat)w / (GLfloat)h, 1.5 * (GLfloat)w / (GLfloat)h, -1.5, 1.5, -10.0, 10.0);
 
 	//glTranslatef(0.0, 0.0, -9.0);
 	//glColor3f(1.0, 0.0, 0.0);
 	glutSolidSphere(1.0, 40, 16);
+}
+
+void DrawLight1(void)
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	int w = 1366;
+	int h = 768;
+
+	//LIGHT1
+	GLfloat light_ambient1[] = { 0.2,0.2,0.2,1.0 };
+	GLfloat light_diffuse1[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat light_specular1[] = { 1.0,1.0,1.0,1.0 };
+	//GLfloat light_position1[] = { -2.0,2.0,-1.0,1.0 };
+	GLfloat light_position1[] = { 2.0,2.0,-1.0,1.0 };
+	//GLfloat spot_direction1[] = { -1.0,1.0,0.0 };
+	GLfloat spot_direction1[] = { -1.0,1.0,0.0 };
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1);
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.5);
+	glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.5);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.2);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction1);
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0);
+	glEnable(GL_LIGHT1);
+
+
+	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_DEPTH_TEST);
+
+	//gluPerspective(30.0f, (float)1366 / 768, 6.f, 12.0f);
+	//glTranslatef(0.0, 0.0, -1.);
+	glOrtho(-1.5 * (GLfloat)w / (GLfloat)h, 1.5 * (GLfloat)w / (GLfloat)h, -1.5, 1.5, -10.0, 10.0);
+
+	//glTranslatef(0.0, 0.0, -9.0);
+	//glColor3f(1.0, 0.0, 0.0);
+	glutSolidSphere(1.0, 40, 16);
+}
+
+void DrawLight2(void) {
+	GLdouble spin = 10.0;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	int w = 1366;
+	int h = 768;
+
+	//gluPerspective(30.0f, (float)1366 / 768, 6.f, 12.0f);
+	//glTranslatef(0.0, 0.0, -1.);
+	glOrtho(-1.5 * (GLfloat)w / (GLfloat)h, 1.5 * (GLfloat)w / (GLfloat)h, -1.5, 1.5, 0.01, 10.0);
+
+	//glTranslatef(0.0, 0.0, -9.0);
+	//glColor3f(1.0, 0.0, 0.0);
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_DEPTH_TEST);
+
+	GLfloat position[] = { 0.0,0.0,1.5,1.0 };
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPushMatrix();
+		glTranslatef(0.0, 0.0, -5.0);
+		glPushMatrix();
+			glRotated((GLdouble)spin, 1.0, 0.0, 0.0);
+			glLightfv(GL_LIGHT0, GL_POSITION, position);
+			glTranslated(0.0, 0.0, 1.5);
+			glDisable(GL_LIGHTING);
+			glColor3f(1.0, 1.0, 1.0);
+			glutWireCube(0.1);
+			glEnable(GL_LIGHTING);
+		glPopMatrix();
+		glutSolidTorus(0.275, 0.85, 40, 40);
+	glPopMatrix();
+}
+
+void DrawLight3(void) {
+	GLdouble spin = 10.0;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	int w = 1366;
+	int h = 768;
+
+	gluPerspective(60.0f, (float)1366 / 768, -6.f, 12.0f);
+	//glTranslatef(0.0, 0.0, -1.);
+	//glOrtho(-1.5 * (GLfloat)w / (GLfloat)h, 1.5 * (GLfloat)w / (GLfloat)h, -1.5, 1.5, -10.0, 10.0);
+
+	GLfloat no_mat[] = { 0.0,0.0,0.0,1.0 };
+	GLfloat mat_ambient[] = { 0.7,0.7,0.7,1.0 };
+	GLfloat mat_ambient_color[] = { 0.8,0.8,0.2,1.0 };
+	GLfloat mat_diffuse[] = { 0.1,0.5,0.8,1.0 };
+	GLfloat mat_specular[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat no_shininess[] = { 0.0 };
+	GLfloat low_shininess[] = { 5.0 };
+	GLfloat high_shininess[] = { 100.0 };
+	GLfloat mat_emission[] = { 0.3,0.2,0.2,0.0 };
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//Нарисовать первую сферу слева
+	glPushMatrix();
+		glTranslated(-3.75, 0.0, 0.0);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+		glMaterialfv(GL_FRONT, GL_SHININESS, no_shininess);
+		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+		glutSolidSphere(1.0, 16, 16);
+	glPopMatrix();
+	//Нарисовать вторую сферу правее первой
+	glPushMatrix();
+		glTranslated(-1.25, 0.0, 0.0);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+		glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+		glutSolidSphere(1.0, 16, 16);
+	glPopMatrix();
+	//Нарисовать третью сферу правее первых двух
+	glPushMatrix();
+		glTranslated(1.25, 0.0, 0.0);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+		glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+		glutSolidSphere(1.0, 16, 16);
+	glPopMatrix();
+	//Нарисовать последнюю сферу справа
+	glPushMatrix();
+	glTranslated(3.75, 0.0, 0.0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat);
+	glMaterialfv(GL_FRONT, GL_SHININESS, no_shininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glutSolidSphere(1.0, 16, 16);
+	glPopMatrix();
 }
 
 
@@ -597,7 +773,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		//if (keys[VK_SPACE]) _angle+=1.0 ;
 		//myfile << "_angle=" << _angle << std::endl;
 		//DrawGLScene(h_angle, v_angle, h_cam, v_cam);  // Нарисовать сцену
-		DrawLight();
+		DrawLight3();
 		SwapBuffers(hDC);	// Переключить буфер экрана
 		if (keys[VK_ESCAPE]) SendMessage(hWnd, WM_CLOSE, 0, 0);
 		// Если ESC - выйти
