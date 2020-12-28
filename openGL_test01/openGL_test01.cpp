@@ -4,9 +4,15 @@
 	// Заголовочный файл для библиотеки OpenGL32 
 #include <gl\glu.h>		
 	// Заголовочный файл для библиотеки GLu32 
-//#include <gl\glaux.h>		
+#include <gl\glaux.h>		
 	// Заголовочный файл для библиотеки GLaux 
 #include <gl\glut.h>	
+
+#include <stdlib.h> 
+#include <time.h>
+
+//#include <stdio.h>
+//#include <wchar.h>
 
 
 #define _USE_MATH_DEFINES
@@ -28,6 +34,85 @@ float v_cam = 0.0;
 float r_object = 0.0; //rotate left
 float r_right = 0.0;//rotate right
 float _zoom = 30.0;
+
+//Arcanoid
+#define racket_w 2
+#define racket_delta racket_w/2
+#define initial_vilocity 0.1
+#define radius 0.5
+
+double x, y;
+double racket_x = 0;
+double vx, vy;
+double right = 5, left = -5, top = 5, bottom = -5;
+
+void CALLBACK Key_LEFT(void)
+{
+	if (racket_x > left)
+		racket_x -= racket_delta;
+}
+
+
+void CALLBACK Key_RIGHT(void)
+{
+	if (racket_x + racket_w < right)
+		racket_x += racket_delta;
+}
+
+
+
+int Catched()
+{
+	if (x > racket_x && x < racket_x + racket_w)
+		return 1;
+	else
+		return 0;
+}
+
+
+
+void GetNextXY()
+{
+
+	x += vx;
+	y += vy;
+
+
+	if (x - radius<left || x + radius>right)
+	{
+		vx = -vx;
+		x += 2 * vx;
+	}
+
+
+	if (y + radius > top || (y - radius < bottom && Catched()))
+	{
+		vy = -vy;
+		y += 2 * vy;
+	}
+
+}
+
+
+
+void DrawRacket()
+{
+	glPushMatrix();
+	glTranslated(racket_x + racket_w / 2, bottom, 0);
+	glColor3ub(0, 0, 255);
+	auxSolidBox(racket_w, 0.5, racket_w);
+	glPopMatrix();
+}
+
+
+void DrawBall()
+{
+	glPushMatrix();
+	glTranslated(x, y, 0);
+	glColor3d(1, 0, 0);
+	auxSolidSphere(radius);
+	glPopMatrix();
+}
 
 GLvoid InitGL(GLsizei Width, GLsizei Height)	//Вызвать после создания окна GL
 {
@@ -326,17 +411,17 @@ void DrawLight2(void) {
 
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
-		glTranslatef(0.0, 0.0, -5.0);
-		glPushMatrix();
-			glRotated((GLdouble)spin, 1.0, 0.0, 0.0);
-			glLightfv(GL_LIGHT0, GL_POSITION, position);
-			glTranslated(0.0, 0.0, 1.5);
-			glDisable(GL_LIGHTING);
-			glColor3f(1.0, 1.0, 1.0);
-			glutWireCube(0.3);
-			//glEnable(GL_LIGHTING);
-		glPopMatrix();
-		glutSolidTorus(0.275, 0.85, 40, 40);
+	glTranslatef(0.0, 0.0, -5.0);
+	glPushMatrix();
+	glRotated((GLdouble)spin, 1.0, 0.0, 0.0);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glTranslated(0.0, 0.0, 1.5);
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0, 1.0, 1.0);
+	glutWireCube(0.3);
+	//glEnable(GL_LIGHTING);
+	glPopMatrix();
+	glutSolidTorus(0.275, 0.85, 40, 40);
 	glPopMatrix();
 }
 
@@ -369,33 +454,33 @@ void DrawLight3(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Нарисовать первую сферу слева
 	glPushMatrix();
-		glTranslated(-3.75, 0.0, 0.0);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-		glMaterialfv(GL_FRONT, GL_SHININESS, no_shininess);
-		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
-		glutSolidSphere(1.0, 16, 16);
+	glTranslated(-3.75, 0.0, 0.0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, no_shininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glutSolidSphere(1.0, 16, 16);
 	glPopMatrix();
 	//Нарисовать вторую сферу правее первой
 	glPushMatrix();
-		glTranslated(-1.25, 0.0, 0.0);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-		glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
-		glutSolidSphere(1.0, 16, 16);
+	glTranslated(-1.25, 0.0, 0.0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glutSolidSphere(1.0, 16, 16);
 	glPopMatrix();
 	//Нарисовать третью сферу правее первых двух
 	glPushMatrix();
-		glTranslated(1.25, 0.0, 0.0);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-		glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
-		glutSolidSphere(1.0, 16, 16);
+	glTranslated(1.25, 0.0, 0.0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glutSolidSphere(1.0, 16, 16);
 	glPopMatrix();
 	//Нарисовать последнюю сферу справа
 	glPushMatrix();
@@ -486,8 +571,310 @@ void DrawLight4(void) {
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 	glutSolidSphere(2.9, 16, 16);
 	glPopMatrix();
-	
+
 }
+
+
+void DrawLight5(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	//auxInitPosition(50, 10, 400, 400);
+	//auxInitDisplayMode(AUX_RGB | AUX_DEPTH | AUX_DOUBLE);
+	//auxInitWindow("Shapes");
+	//auxIdleFunc(display);
+	//auxReshapeFunc(resize);
+
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glPushMatrix();
+
+	glTranslated(0.5, 4, 0);
+	glColor3d(0, 0, 1);
+	auxSolidCube(1);      // куб
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 0);
+	auxSolidBox(1, 0.75, 0.5);  // коробка 
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 1);
+	auxSolidTorus(0.2, 0.5);         // тор
+
+	glTranslated(0, -2, 0);
+	glColor3d(1, 0, 0);
+	auxSolidCylinder(0.5, 1); // цилиндер
+
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 0);
+	auxSolidCone(1, 1);     // конус
+
+	glTranslated(2, 8, 0);
+	glColor3d(1, 0, 1);
+	auxSolidIcosahedron(1); // многогранники
+
+	glTranslated(0, -2, 0);
+	glColor3d(1, 1, 1);
+	auxSolidOctahedron(1);
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 1);
+	auxSolidTeapot(0.7);       // рисует чайник   
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 0);
+	auxSolidTetrahedron(1);
+
+	glTranslated(0, -2, 0);
+	glColor3d(1, 1, 0);
+	auxSolidDodecahedron(1);
+
+
+	glTranslated(-6, 8, 0);
+	glColor3d(0, 0, 1);
+	auxWireCube(1);      // куб
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 0);
+	auxWireBox(1, 0.75, 0.5);  // коробка 
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 1);
+	auxWireTorus(0.2, 0.5);         // тор
+
+	glTranslated(0, -2, 0);
+	glColor3d(1, 0, 0);
+	auxWireCylinder(0.5, 1); // цилиндер
+
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 0);
+	auxWireCone(1, 1);     // конус
+
+	glTranslated(2, 8, 0);
+	glColor3d(1, 0, 1);
+	auxWireIcosahedron(1); // многогранники
+
+	glTranslated(0, -2, 0);
+	glColor3d(1, 1, 1);
+	auxWireOctahedron(1);
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 1);
+	auxWireTeapot(0.7);       // рисует чайник   
+
+	glTranslated(0, -2, 0);
+	glColor3d(0, 1, 0);
+	auxWireTetrahedron(1);
+
+	glTranslated(0, -2, 0);
+	glColor3d(1, 1, 0);
+	auxWireDodecahedron(1);
+
+	glPopMatrix();
+
+
+	//auxSwapBuffers();
+
+	//auxMainLoop(display);
+}
+
+
+void DrawLight6(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	//auxInitPosition(50, 10, 400, 400);
+	//auxInitDisplayMode(AUX_RGB | AUX_DEPTH | AUX_DOUBLE);
+	//auxInitWindow("Shapes");
+	//auxIdleFunc(display);
+	//auxReshapeFunc(resize);
+
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glColor3d(1, 0, 0);
+	auxSolidCone(1, 2);  // рисуем конус в центре координат
+
+	glPushMatrix();     // сохраняем текущие координаты
+	glTranslated(1, 0, 0);  // сдвигаемся в точку (1,0,0)
+	glRotated(75, 1, 0, 0); // поворачиваем систему координат на 75 градусов
+	glColor3d(0, 1, 0);
+	auxSolidCone(1, 2);   // рисуем конус
+	glPopMatrix();
+}
+
+void DrawLight7(void) {
+	static int time = 0;
+
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	//auxInitPosition(50, 10, 400, 400);
+	//auxInitDisplayMode(AUX_RGB | AUX_DEPTH | AUX_DOUBLE);
+	//auxInitWindow("Shapes");
+	//auxIdleFunc(display);
+	//auxReshapeFunc(resize);
+
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+	//glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glPushMatrix();
+		//glRotated(time / 2, 0.0, 1.0, 0.0);
+		glRotated(time / 20, 0.0, 1.0, 0.0);
+
+		glLineWidth(5.0f);
+		glColor3f(1.0f, 0.0f, 0.0f);
+
+		glBegin(GL_LINES);
+		glVertex3d(-0.3, 0.0, 0.0);
+		glVertex3d(1.5, 0.0, 0.0);
+		glEnd();
+
+
+		glPushMatrix();
+			glRotated(2 * time, 1, 0, 0);
+			//glRotated(time/2, 1, 0, 0);
+			glTranslated(-0.3, 0, 0);
+			glColor3f(0, 0, 1);
+
+			glPushMatrix();
+				glRotated(90, 0, 1, 0);
+				glLineWidth(1);
+				auxWireTorus(0.2, 0.7);
+			glPopMatrix();
+
+
+			glLineWidth(7);
+			glColor3f(0, 1, 0);
+
+			glBegin(GL_LINES);
+			glVertex3d(0, 0, 0);
+			glVertex3d(0, 1, 0);
+			glVertex3d(0, 0, 0);
+			glVertex3d(0, -0.5, 1);
+			glVertex3d(0, 0, 0);
+			glVertex3d(0, -0.5, -1);
+			glEnd();
+		glPopMatrix();
+	glPopMatrix();
+
+
+
+	time++;
+}
+
+void DrawLight8(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	srand(time(0));
+
+	vx = initial_vilocity + ((double)(rand() % 50)) / 1000.0;
+	vy = initial_vilocity + ((double)(rand() % 50)) / 1000.0;
+
+	//auxInitPosition(50, 10, 400, 400);
+	//auxInitDisplayMode(AUX_RGB | AUX_DEPTH | AUX_DOUBLE);
+	//auxInitWindow("Game --- Arcanoid");
+
+	//auxKeyFunc(AUX_LEFT, Key_LEFT);
+	//auxKeyFunc(AUX_RIGHT, Key_RIGHT);
+
+	//auxInitPosition(50, 10, 400, 400);
+	//auxInitDisplayMode(AUX_RGB | AUX_DEPTH | AUX_DOUBLE);
+	//auxInitWindow("Shapes");
+	//auxIdleFunc(display);
+	//auxReshapeFunc(resize);
+
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	GetNextXY();
+	DrawBall();
+	DrawRacket();
+
+	if (y - radius < bottom)
+		auxQuit();
+}
+
 
 //GLvoid DrawGLScene(GLvoid)
 GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam)
@@ -685,9 +1072,11 @@ LRESULT CALLBACK WndProc(HWND	hWnd,
 			break;
 		case VK_LEFT:
 			h_angle += 10.0;
+			Key_LEFT();
 			break;
 		case VK_RIGHT:
 			h_angle -= 10.0;
+			Key_RIGHT();
 			break;
 		case VK_UP:
 			v_angle += 10.0;
@@ -839,7 +1228,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		//if (keys[VK_SPACE]) _angle+=1.0 ;
 		//myfile << "_angle=" << _angle << std::endl;
 		//DrawGLScene(h_angle, v_angle, h_cam, v_cam);  // Нарисовать сцену
-		DrawLight1();
+		DrawLight8();
 		SwapBuffers(hDC);	// Переключить буфер экрана
 		if (keys[VK_ESCAPE]) SendMessage(hWnd, WM_CLOSE, 0, 0);
 		// Если ESC - выйти
