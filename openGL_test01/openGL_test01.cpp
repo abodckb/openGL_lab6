@@ -46,6 +46,30 @@ double racket_x = 0;
 double vx, vy;
 double right = 5, left = -5, top = 5, bottom = -5;
 
+float density;
+
+
+#define checkImageWidth 64
+#define checkImageHeight 64
+GLubyte checkImage[checkImageHeight][checkImageWidth][4];
+GLuint texName;
+
+void makeCheckImage()
+{
+	int i, j, c;
+	for (i = 0; i < checkImageHeight; i++)
+	{
+		for (j = 0; j < checkImageWidth; j++)
+		{
+			c = (((i & 0x8) == 0) ^ ((j & 0x8) == 0)) * 255;
+			checkImage[i][j][0] = (GLubyte)c;
+			checkImage[i][j][1] = (GLubyte)c;
+			checkImage[i][j][2] = (GLubyte)c;
+			checkImage[i][j][3] = (GLubyte)255;
+		}
+	}
+}
+
 void CALLBACK Key_LEFT(void)
 {
 	if (racket_x > left)
@@ -59,6 +83,18 @@ void CALLBACK Key_RIGHT(void)
 		racket_x += racket_delta;
 }
 
+void CALLBACK Key_UP(void)
+{
+	density += (float)0.1;
+	glFogf(GL_FOG_DENSITY, density);
+}
+
+
+void CALLBACK Key_DOWN(void)
+{
+	density -= (float)0.1;
+	glFogf(GL_FOG_DENSITY, density);
+}
 
 
 int Catched()
@@ -210,30 +246,29 @@ void drawQube()
 {
 	float size = 1.f;
 	glBegin(GL_QUADS);
+		//glColor3f(randomFlt(), randomFlt(), randomFlt());
+		//float _cred = randomFlt();
+		//float _cgreen = randomFlt();
+		//float _cblue = randomFlt();
+		//glColor3f(_cred, _cgreen, _cblue);
+		glColor3f(1.0, 0.0, 0.0);
 
-	//glColor3f(randomFlt(), randomFlt(), randomFlt());
-	//float _cred = randomFlt();
-	//float _cgreen = randomFlt();
-	//float _cblue = randomFlt();
-	//glColor3f(_cred, _cgreen, _cblue);
-	glColor3f(1.0, 0.0, 0.0);
 
+		//front
+		glVertex3f(-size, -size, size);
+		glVertex3f(size, -size, size);
+		glVertex3f(size, size, size);
+		glVertex3f(-size, size, size);
+		glEnd();
 
-	//front
-	glVertex3f(-size, -size, size);
-	glVertex3f(size, -size, size);
-	glVertex3f(size, size, size);
-	glVertex3f(-size, size, size);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	//glColor3f(randomFlt(), randomFlt(), randomFlt());
-	glColor3f(0.0, 0.0, 0.0);
-	//back
-	glVertex3f(-size, -size, -size);
-	glVertex3f(-size, size, -size);
-	glVertex3f(size, size, -size);
-	glVertex3f(size, -size, -size);
+		glBegin(GL_QUADS);
+		//glColor3f(randomFlt(), randomFlt(), randomFlt());
+		glColor3f(0.0, 0.0, 0.0);
+		//back
+		glVertex3f(-size, -size, -size);
+		glVertex3f(-size, size, -size);
+		glVertex3f(size, size, -size);
+		glVertex3f(size, -size, -size);
 	glEnd();
 
 
@@ -875,6 +910,277 @@ void DrawLight8(void) {
 		auxQuit();
 }
 
+//отсечение плоскости
+void DrawLight9(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	GLfloat mat_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat mat_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialf(GL_FRONT, GL_SHININESS,50.0);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	GLdouble equation[4] = { -1,-0.25,0,2 };
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	glEnable(GL_CLIP_PLANE0);
+	glClipPlane(GL_CLIP_PLANE0, equation);
+
+	glColor3d(1, 0, 0);
+	auxSolidSphere(3);
+
+	glDisable(GL_CLIP_PLANE0);
+}
+
+
+//fog
+void DrawLight10(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+	float fogcolor[4] = { 0.25,0.25,0.25,1 }; // цвет тумана
+
+	GLfloat mat_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat mat_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialf(GL_FRONT, GL_SHININESS, 50.0);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_FOG);                      // разрешаем туман
+	glGetFloatv(GL_FOG_DENSITY, &density); // получаем значение плотности
+	glFogfv(GL_FOG_COLOR, fogcolor);       // устанавливаем цвет тумана
+
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLdouble equation[4] = { -1,-0.25,0,2 };
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	glEnable(GL_CLIP_PLANE0);
+	glClipPlane(GL_CLIP_PLANE0, equation);
+
+	glColor3d(1, 0, 0);
+	auxSolidSphere(3);
+
+	glDisable(GL_CLIP_PLANE0);
+}
+
+//снеговик
+void DrawLight11(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glPushMatrix();
+		glColor3d(0.75, 0.75, 0.75);
+
+		glTranslated(0, -3, 0);
+		auxSolidSphere(2.0);
+
+		glTranslated(0, 3, 0);
+		auxSolidSphere(1.5);
+
+		glTranslated(0, 2, 0);
+		auxSolidSphere(1);
+
+
+		glColor3d(0, 0, 0);
+
+		glTranslated(-0.3, 0.3, 1);
+		auxSolidSphere(0.1);
+
+		glTranslated(0.6, 0, 0);
+		auxSolidSphere(0.1);
+
+		glTranslated(-0.3, -0.3, 0);
+		glColor3d(1, 0, 0);
+		auxSolidCone(0.3, 0.5);
+
+		glTranslated(0, 0.75, -1);
+		glColor3d(0, 0, 1);
+		glRotated(-90, 1, 0, 0);
+		auxSolidCone(0.75, 0.75);
+	glPopMatrix();
+}
+
+//трафарет
+void DrawLight12(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-5, 5, -5, 5, 2, 12);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	// разрешаем тест трафарета
+	glEnable(GL_STENCIL_TEST);
+
+	// рисуем куб и заполняем буффер трафарета единицами
+	// в том месте, где рисуется куб
+	// тут у меня немного по другому, чем  выше было разобрано,
+	// но действие выполняется анологичное
+	glStencilFunc(GL_ALWAYS, 1, 0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	auxSolidCube(2.5);
+
+	// заполняем буффер трафарета двойками
+	// в том месте, где сфера закрывает куб
+	glStencilFunc(GL_ALWAYS, 2, 0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	auxSolidSphere(1.5);
+
+	// очищаем буфферы цвета и глубины
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glStencilFunc(GL_EQUAL, 1, 255);
+	glColor3d(1, 1, 1);
+	auxSolidCube(2.5);
+
+	// вращаем сцену
+	//glPushMatrix();
+		glRotated(3, 1, 0, 0);
+		glRotated(5, 0, 1, 0);
+		glRotated(7, 0, 0, 1);
+	//glPopMatrix();
+}
+
+void DrawLight13(void) {
+	int width = 1366;
+	int height = 768;
+
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0, (GLfloat)width / (GLfloat)height, 1.0, 30.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0.0, 0.0, -3.6);
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glShadeModel(GL_FLAT);
+	glEnable(GL_DEPTH_TEST);
+	makeCheckImage();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &texName);
+	glBindTexture(GL_TEXTURE_2D, texName);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkImageWidth, checkImageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glBindTexture(GL_TEXTURE_2D, texName);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-2.0, -1.0, 0.0);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-2.0, 1.0, 0.0);
+		glTexCoord2f(1.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
+		glTexCoord2f(1.0, 0.0); glVertex3f(0.0, -1.0, 0.0);
+		glTexCoord2f(0.0, 0.0); glVertex3f(1.0, -1.0, 0.0);
+		glTexCoord2f(0.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
+		glTexCoord2f(1.0, 1.0); glVertex3f(2.41421, 1.0, -1.41421);
+		glTexCoord2f(1.0, 0.0); glVertex3f(2.41421, -1.0, -1.41421);
+	glEnd();
+	glFlush();
+	glDisable(GL_TEXTURE_2D);
+}
 
 //GLvoid DrawGLScene(GLvoid)
 GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam)
@@ -1228,7 +1534,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		//if (keys[VK_SPACE]) _angle+=1.0 ;
 		//myfile << "_angle=" << _angle << std::endl;
 		//DrawGLScene(h_angle, v_angle, h_cam, v_cam);  // Нарисовать сцену
-		DrawLight8();
+		DrawLight2();
 		SwapBuffers(hDC);	// Переключить буфер экрана
 		if (keys[VK_ESCAPE]) SendMessage(hWnd, WM_CLOSE, 0, 0);
 		// Если ESC - выйти

@@ -839,7 +839,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		//if (keys[VK_SPACE]) _angle+=1.0 ;
 		//myfile << "_angle=" << _angle << std::endl;
 		//DrawGLScene(h_angle, v_angle, h_cam, v_cam);  // Нарисовать сцену
-		DrawLight1();
+		DrawLight4();
 		SwapBuffers(hDC);	// Переключить буфер экрана
 		if (keys[VK_ESCAPE]) SendMessage(hWnd, WM_CLOSE, 0, 0);
 		// Если ESC - выйти
