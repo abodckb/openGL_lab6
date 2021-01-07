@@ -45,3 +45,4 @@ extern AUX_RGBImageRec* ImRect1;
 #define ROAD 10
 #define RAIN 11
 #define RAIN1 12
+#define WINDOW1 13

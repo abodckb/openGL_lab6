@@ -31,11 +31,16 @@ float r_right = 0.0;//rotate right
 float _zoom = 45.0;
 float stepman = 0.0;
 
+float xCar = 0.0;
+float zCar = 0.0;
+float prevCar = 0.0;// предыдущий угол поворота машины
+float curCar = 0.0;// текущий угол поворота машины
+
 GLuint TextNames[100];
 AUX_RGBImageRec* TextureMass[100];
 AUX_RGBImageRec* ImRect1;
 //char* TextureFiles[] = {"Bricks.bmp"};
-const char* TextureFiles[] = { "Bricks.bmp","space.bmp","CarBotton.bmp","protectorbump_010.bmp","headlights_001.bmp","metals_004.bmp","skies_031.bmp","sand_35.bmp","bricks_039.bmp","woods_023.bmp", "street2.bmp", "rain.bmp", "rain1.bmp" };
+const char* TextureFiles[] = { "Bricks.bmp","space.bmp","CarBotton.bmp","protectorbump_010.bmp","headlights_001.bmp","metals_004.bmp","skies_031.bmp","sand_35.bmp","bricks_039.bmp","woods_023.bmp", "street2.bmp", "rain.bmp", "rain1.bmp", "window.bmp" };
 
 GLvoid InitGL(GLsizei Width, GLsizei Height)	//Вызвать после создания окна GL
 {
@@ -445,6 +450,7 @@ void drawCar(float size)
 	glPushMatrix();
 		glTranslatef(0, 0.3 * size, 0.0);
 
+		//glDisable(GL_TEXTURE_2D);
 		//glEnable(GL_TEXTURE_2D);
 		drawQube(size);
 		//glDisable(GL_TEXTURE_2D);
@@ -611,29 +617,109 @@ void drawHome()
 
 	//glPushMatrix();
 	gluQuadricTexture(quadricObj, GL_TRUE);
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, TextNames[BRIKS1]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	//glTranslatef(1.0, -0.5, -0.7);		//фара 1
-	//glColor3f(1, 1, 0);
-	GLfloat color_mat4[] = { 1.0,1.0,0.0,1.0 };
+	
+	GLfloat color_mat4[] = { 1.0,1.0,1.0,1.0 };
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat4);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat4);
 
 	glPushMatrix();
 		glTranslatef(0.0, size, 0.0);
+
+//----START----window----
+		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		color_mat4[0] = 1.0;
+		color_mat4[1] = 1.0;
+		color_mat4[2] = 0.0;
+
+		//glBegin(GL_QUADS);
+		//	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
+		//	glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
+		//	glVertex3f(-0.01, -size / 2, size + 0.003);
+		//	glVertex3f(0.01, -size / 2, size + 0.003);
+		//	glVertex3f(0.01, size / 2, size + 0.003);
+		//	glVertex3f(-0.01, size / 2, size + 0.003);
+
+		//	glVertex3f(-size / 2, -0.01, size + 0.003);
+		//	glVertex3f(size / 2, -0.01, size + 0.003);
+		//	glVertex3f(size / 2, 0.01, size + 0.003);
+		//	glVertex3f(-size / 2, 0.01, size + 0.003);
+		//glEnd();
+
+		//color_mat4[0] = 1.0;
+		//color_mat4[1] = 1.0;
+		//color_mat4[2] = 0.0;
+		//glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat4);
+		//glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat4);
+
+		//glBegin(GL_QUADS);
+		//	glVertex3f(-size / 2 + 0.1, -size / 2 + 0.1, size + 0.002);
+		//	glVertex3f(size / 2 - 0.1, -size / 2 + 0.1, size + 0.002);
+		//	glVertex3f(size / 2 - 0.1, size / 2 - 0.1, size + 0.002);
+		//	glVertex3f(-size / 2 + 0.1, size / 2 - 0.1, size + 0.002);
+		//glEnd();
+
+		//glBegin(GL_QUADS);
+		//	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
+		//	glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
+		//	glVertex3f(-size / 2, -size / 2, size + 0.001);
+		//	glVertex3f(size / 2, -size / 2, size + 0.001);
+		//	glVertex3f(size / 2, size / 2, size + 0.001);
+		//	glVertex3f(-size / 2, size / 2, size + 0.001);
+		//glEnd();
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, TextNames[WINDOW1]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glColor3f(0, 0, 0);
+
 		glBegin(GL_QUADS);
-			//glColor3f(randomFlt(), randomFlt(), randomFlt());
-			//float _cred = randomFlt();
-			//float _cgreen = randomFlt();
-			//float _cblue = randomFlt();
-			//glColor3f(_cred, _cgreen, _cblue);
-			glColor3f(0.652, 0.566, 0.727);
+		//glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
+		//glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
+		glColor3f(0, 1, 1);
+		glTexCoord2f(0, 0);
+		glVertex3f(-size / 2, -size / 2, size + 0.005);
+		glTexCoord2f(1, 0);
+		glVertex3f(size / 2, -size / 2, size + 0.005);
+		glTexCoord2f(1, 1);
+		glVertex3f(size / 2, size / 2, size + 0.005);
+		glTexCoord2f(0, 1);
+		glVertex3f(-size / 2, size / 2, size + 0.005);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+
+//----END----window----
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, TextNames[BRIKS1]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glColor3f(0, 0, 0);
+		color_mat4[0] = 0.5;
+		color_mat4[1] = 0.5;
+		color_mat4[2] = 0.5;
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat4);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat4);
+
+	//glPushMatrix();
+	//	glTranslatef(0.0, size, 0.0);
+		glBegin(GL_QUADS);
+			//glColor3f(1, 1, 1);
 			//front
 			glTexCoord2f(0, 0);
 			glVertex3f(-size, -size, size);
@@ -776,46 +862,77 @@ void drawHome()
 			glTexCoord2f(1, 0);
 			glVertex3f(-size - 0.375, size - 0.3, -size- 0.375);
 		glEnd();
+
 //----END----roof-----
 		glDisable(GL_TEXTURE_2D);
 
-//----START----window----
-		glBegin(GL_QUADS);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
-			glVertex3f(-size / 2, -size / 2, size + 0.001);
-			glVertex3f(size / 2, -size / 2, size + 0.001);
-			glVertex3f(size / 2, size / 2, size + 0.001);
-			glVertex3f(-size / 2, size / 2, size + 0.001);
-		glEnd();
+////----START----window----
+//		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+//		color_mat4[0] = 1.0;
+//		color_mat4[1] = 1.0;
+//		color_mat4[2] = 0.0;
+//		glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat4);
+//		glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat4);
+//		glBegin(GL_QUADS);
+//			glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
+//			glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
+//			glVertex3f(-size / 2, -size / 2, size + 0.001);
+//			glVertex3f(size / 2, -size / 2, size + 0.001);
+//			glVertex3f(size / 2, size / 2, size + 0.001);
+//			glVertex3f(-size / 2, size / 2, size + 0.001);
+//		glEnd();
+//
+//		//GLfloat color_mat4[] = { 1.0,1.0,0.0,1.0 };
+//		glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat4);
+//		glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat4);
+//
+//		glBegin(GL_QUADS);
+//			glVertex3f(-size / 2+0.1, -size / 2 + 0.1, size + 0.002);
+//			glVertex3f(size / 2 - 0.1, -size / 2 + 0.1, size + 0.002);
+//			glVertex3f(size / 2 - 0.1, size / 2 - 0.1, size + 0.002);
+//			glVertex3f(-size / 2 + 0.1, size / 2 - 0.1, size + 0.002);
+//		glEnd();
+//
+//		glBegin(GL_QUADS);
+//			glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
+//			glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
+//			glVertex3f(-0.01, -size / 2, size + 0.003);
+//			glVertex3f(0.01, -size / 2, size + 0.003);
+//			glVertex3f(0.01, size / 2, size + 0.003);
+//			glVertex3f(-0.01, size / 2, size + 0.003);
+//
+//			glVertex3f(-size/2, -0.01, size + 0.003);
+//			glVertex3f(size/2, -0.01, size + 0.003);
+//			glVertex3f(size/2, 0.01, size + 0.003);
+//			glVertex3f(-size/2, 0.01, size + 0.003);
+//		glEnd();
 
-		//GLfloat color_mat4[] = { 1.0,1.0,0.0,1.0 };
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat4);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat4);
+		//glEnable(GL_TEXTURE_2D);
+		//glBindTexture(GL_TEXTURE_2D, TextNames[WINDOW1]);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
+		////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		//glColor3f(0, 0, 0);
 
-		glBegin(GL_QUADS);
-			glVertex3f(-size / 2+0.1, -size / 2 + 0.1, size + 0.002);
-			glVertex3f(size / 2 - 0.1, -size / 2 + 0.1, size + 0.002);
-			glVertex3f(size / 2 - 0.1, size / 2 - 0.1, size + 0.002);
-			glVertex3f(-size / 2 + 0.1, size / 2 - 0.1, size + 0.002);
-		glEnd();
-
-		glBegin(GL_QUADS);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
-			glVertex3f(-0.01, -size / 2, size + 0.003);
-			glVertex3f(0.01, -size / 2, size + 0.003);
-			glVertex3f(0.01, size / 2, size + 0.003);
-			glVertex3f(-0.01, size / 2, size + 0.003);
-
-			glVertex3f(-size/2, -0.01, size + 0.003);
-			glVertex3f(size/2, -0.01, size + 0.003);
-			glVertex3f(size/2, 0.01, size + 0.003);
-			glVertex3f(-size/2, 0.01, size + 0.003);
-		glEnd();
-
-
-//----END----window----
+		//glBegin(GL_QUADS);
+		////glMaterialfv(GL_FRONT, GL_DIFFUSE, color_black);
+		////glMaterialfv(GL_FRONT, GL_SPECULAR, color_black);
+		//glColor3f(0, 1, 1);
+		//	glTexCoord2f(0, 0);
+		//	glVertex3f(-size / 2, -size / 2, size + 0.005);
+		//	glTexCoord2f(1, 0);
+		//	glVertex3f(size / 2, -size / 2, size + 0.005);
+		//	glTexCoord2f(1, 1);
+		//	glVertex3f(size / 2, size / 2, size + 0.005);
+		//	glTexCoord2f(0, 1);
+		//	glVertex3f(-size / 2, size / 2, size + 0.005);
+		//glEnd();
+		//glDisable(GL_TEXTURE_2D);
+//
+//
+////----END----window----
 	glPopMatrix();
 
 }
@@ -847,12 +964,105 @@ void drawRoad(int gsize, float size)
 		glTexCoord2f(1, 0);
 		glVertex3f(size, 0, 0);
 		glTexCoord2f(1, 5);
-		glVertex3f(size, 0, -gsize);//gsize
+		glVertex3f(size, 0, -2*gsize);//gsize
 		glTexCoord2f(0, 5);
-		glVertex3f(0, 0, -gsize);
+		glVertex3f(0, 0, -2*gsize);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 
+}
+
+
+void drawSnowman(float size)
+{
+	GLUquadricObj* quadricObj = gluNewQuadric();
+
+	GLfloat mat_diffuse_white[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat mat_diffuse_red[] = { 1.0,0.0,0.0,1.0 };
+	GLfloat mat_diffuse_black[] = { 0.0,0.0,0.0,1.0 };
+
+	GLfloat mat_specular_white[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat mat_specular_red[] = { 1.0,0.0,0.0,1.0 };
+	GLfloat mat_specular_black[] = { 0.0,0.0,0.0,1.0 };
+
+	GLfloat color_white[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat color_red[] = { 1.0,0.0,0.0,1.0 };
+	GLfloat color_black[] = { 0.0,0.0,0.0,1.0 };
+
+// ----START----snowman------------------
+	glPushMatrix();
+	glTranslatef(0, 0.7*size, 0);		//начальный сдвиг 
+	//glRotatef(stepman, 0, 1, 0);
+
+	//glTranslatef(1.0, -0.0, -0.0);		//начальный сдвиг 
+	//glTranslatef(1 * sin(stepman), -1.0*1 * cos(stepman), -9.0);		//начальный сдвиг 
+	glColor3f(0.746, 0.832, 0.797);
+	//GLfloat color_mat1[] = { 0.746, 0.832, 0.797,1.0 };
+	GLfloat color_mat1[] = { 0.5, 0.5, 0.5,1.0 };
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat1);
+	//glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat_specular);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat1);
+
+	//gluQuadricTexture(quadricObj, GL_TRUE);
+	//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, TextNames[SPACE]);
+	////glMaterialfv(GL_FRONT, GL_AMBIENT, glTexAmbientFlore);
+	////glMaterialfv(GL_FRONT, GL_DIFFUSE, glTexDiffuseFlore);
+	////glMaterialfv(GL_FRONT, GL_SPECULAR, glTexShineFlore);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
+	////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	//glutSolidSphere(0.7, 99, 99);
+	glPushMatrix();
+		glRotated(-90, 1, 0, 0);
+		gluSphere(quadricObj, 0.7*size, 16, 16);
+	glPopMatrix();
+
+	//glDisable(GL_TEXTURE_2D);
+
+	glPushMatrix();
+	glTranslatef(0.0, 1.15 * size, 0.0);		//начальный сдвиг 
+	glColor3f(0.746, 0.832, 0.797);
+	glutSolidSphere(0.45 * size, 99, 99);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0, 1.9 * size, 0.0);		//начальный сдвиг 
+	glColor3f(0.746, 0.832, 0.797);
+	glutSolidSphere(0.3 * size, 99, 99);
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(0.09 * size, 1.95 * size, 0.24 * size);		//начальный сдвиг 
+		//glColor3f(0, 0, 0);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse_black);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular_black);
+		glutSolidSphere(0.05 * size, 99, 99);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.09 * size, 1.95 * size, 0.24 * size);		//начальный сдвиг 
+	glColor3f(0, 0, 0);
+	glutSolidSphere(0.05 * size, 99, 99);
+	glPopMatrix();
+
+	glPushMatrix();
+	//glScalef(TYPE kx, TYPE ky, TYPE kz);
+	glTranslatef(0.00, 1.85 * size, 0.28 * size);		//начальный сдвиг 
+	glColor3f(1, 0.549, 0);
+	GLfloat color_mat3[] = { 1.0,0.0,0.0,1.0 };
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat3);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat3);
+	gluQuadricDrawStyle(quadricObj, GLU_FILL);
+	gluCylinder(quadricObj, 0.05 * size, 0, 0.15 * size, 99, 99);
+	glPopMatrix();
+	//glRotatef(-stepman, 0, 1, 0);
+	glPopMatrix();
+	//gluDeleteQuadric(quadricObj);
+//---END---snowman------------------
 }
 
 GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float stepman)
@@ -906,24 +1116,36 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 
 	//Light0 modes
 	GLfloat glLight0_ambient[] = { 0.0,0.0,0.0,1.0 };
+	//GLfloat glLight0_ambient[] = { 0.5,0.5,0.5,1.0 };
 	GLfloat glLight0_diffuse[] = { 1,1,1,1 };
 	GLfloat glLight0_specular[] = { 1,1,1,1 };
 	GLfloat glLight0_position[] = { 0,0,1,0 };
 	//GLfloat glLight0_position[] = { 0,2,1,1 };
 	//set light0------------------------------
-	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHT0);
 	//glLightfv(GL_LIGHT0, GL_AMBIENT, glLight0_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, glLight0_diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, glLight0_specular);
 	glLightfv(GL_LIGHT0, GL_POSITION, glLight0_position);
 
+	//set light1
+	GLfloat glLight1_ambient[] = { 0.2,0.2,0.2,1.0 };
+	GLfloat glLight1_diffuse[] = { 1,1,1,1 };
+	GLfloat glLight1_specular[] = { 1,1,1,1 };
+	GLfloat glLight1_position[] = { 0, 15, 7, 1 };
+	//glEnable(GL_LIGHT1);
+	//glLightfv(GL_LIGHT2, GL_AMBIENT, glLight2_ambient);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, glLight1_diffuse);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, glLight1_specular);
+	glLightfv(GL_LIGHT1, GL_POSITION, glLight1_position);
+
 	//set light2
 	GLfloat glLight2_ambient[] = { 0.2,0.2,0.2,1.0 };
 	GLfloat glLight2_diffuse[] = { 1,1,1,1 };
 	GLfloat glLight2_specular[] = { 1,1,1,1 };
-	GLfloat glLight2_position[] = { 2,5,-5,1 };
+	GLfloat glLight2_position[] = { 2,2,-12,1 };
 	glEnable(GL_LIGHT2);
-	//glLightfv(GL_LIGHT2, GL_AMBIENT, glLight2_ambient);
+	glLightfv(GL_LIGHT2, GL_AMBIENT, glLight2_ambient);
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, glLight2_diffuse);
 	glLightfv(GL_LIGHT2, GL_SPECULAR, glLight2_specular);
 	glLightfv(GL_LIGHT2, GL_POSITION, glLight2_position);
@@ -933,7 +1155,7 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity(); 			//Сброс всех матриц в 1
-	gluPerspective(_zoom, (float)1366 / 768, 3.f, 20.0f);
+	gluPerspective(_zoom, (float)1366 / 768, 0.1f, 40.0f);
 	//glRotatef(r_object, 0, 1, 0);
 	//glRotatef(v_cam, 1, 0, 0);
 	////glFrustum(-1, 1, -1, 1, 1, 5);	//видовые параметры
@@ -944,10 +1166,10 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 
 	glTranslatef(0.0, -1.0, 0.0);
 	//вращение сцены в горизонтальной и вертикальной плоскости
-	glTranslatef(0.0, 0.0, -9.0);
-	glRotatef(r_object, 0, 1, 0);
-	glRotatef(v_cam, 1, 0, 0);
-	glTranslatef(0.0, 0.0, 9.0);
+	//glTranslatef(0.0, 0.0, -9.0);
+	//glRotatef(r_object, 0, 1, 0);
+	//glRotatef(v_cam, 1, 0, 0);
+	//glTranslatef(0.0, 0.0, 9.0);
 	
 
 	//glRasterPos2d(0, 0);
@@ -955,7 +1177,13 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 	//glPixelZoom(1.0, 1.0);
 	//glDrawPixels(TextureMass[1]->sizeX, TextureMass[1]->sizeY,GL_RGB, GL_UNSIGNED_BYTE, TextureMass[1]->data);
 
-	////gluLookAt(-1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	GLfloat gsize = 20.0;
+	float x = (gsize-1) * cos(v_cam * PI / 180) * sin(r_object * PI / 180);
+	float y = (gsize - 1) * sin(v_cam * PI / 180);
+	float z = (gsize - 1) * cos(v_cam * PI / 180) * cos(r_object * PI / 180);
+	gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	//gluLookAt(-1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	//glTranslatef(0.0, -1.0, -9.0);		//начальный сдвиг 
 	////--------------------------
 	//glRotatef(h_angle, 0, 1, 0);
@@ -963,13 +1191,12 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 	////--------------------------
 	//drawQube();
 
-
 //---START---XYZ------------------
 	glDisable(GL_LIGHTING);
 	glLineWidth(3);       // ширину линии устанавливаем 1
 
 	glPushMatrix();
-		glTranslatef(0.0, 0.0, -9.0);
+		//glTranslatef(0.0, 0.0, -9.0);
 		glBegin(GL_LINES);
 			glColor3d(1, 0, 0);     // красный цвет
 			glVertex3d(0, 0, 0);
@@ -998,12 +1225,21 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 	glEnable(GL_CLIP_PLANE0);
 	glClipPlane(GL_CLIP_PLANE0, equation);
 	glPushMatrix();
-		glTranslatef(0.0, 0.0, -9.0);
+		//glTranslatef(0.0, 0.0, -9.0);
 		glRotated(-90, 0, 0, 1);
-		gluSphere(quadricObj, 10, 99, 99);
+		gluSphere(quadricObj, gsize, 99, 99);
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 //---END---sky------------------
+
+//---START---road------------------
+	static GLfloat xyzRoad[] = { 4, 0.005, gsize };
+	glPushMatrix();
+		glTranslatef(xyzRoad[0], xyzRoad[1], xyzRoad[2]);
+		drawRoad(gsize, size);
+	glPopMatrix();
+
+	//---END---road------------------
 
 //---START---ground------------------
 	glEnable(GL_TEXTURE_2D);
@@ -1015,72 +1251,51 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	//glPushMatrix();
-	//	glTranslatef(0.0, 0.0, -18.0);
-	//	float size = 1.f;
-	//	glBegin(GL_QUADS);
-	//		glColor3f(0.0, 0.0, 1.0);
-	//		//front
-	//		glVertex3f(-size, -size, size);
-	//		glVertex3f(size, -size, size);
-	//		glVertex3f(size, size, size);
-	//		glVertex3f(-size, size, size);
-	//	glEnd();
-	//glPopMatrix();
+	//	glTranslatef(0.0, 0.0, 9.0);
+	
 
-	//glPushMatrix();
-	//	glTranslatef(0.0, 0.0, -4.10);
-	//	float size = 0.3f;
-	//	glBegin(GL_QUADS);
-	//		glColor3f(.0, .0, 1.0);
-	//		//front
-	//		glVertex3f(-size, 0, size);
-	//		glVertex3f(size, 0, size);
-	//		glVertex3f(size, size, size);
-	//		glVertex3f(-size, size, size);
-	//	glEnd();
-	//glPopMatrix();
 
 	glColor3f(1, 1, 1);
 
-	GLfloat gsize=20.0;
+	//GLfloat gsize=20.0;
 	glBegin(GL_QUADS);//GL_POLYGON  GL_QUADS
 		glTexCoord2f(0, 0);
-		glVertex3f(-gsize, 0.0, 0.0);
+		glVertex3f(-gsize, 0.0, gsize);
 		glTexCoord2f(1, 0);
-		glVertex3f(gsize, 0.0, 0.0);
+		glVertex3f(gsize, 0.0, gsize);
 		glTexCoord2f(1, 1);
 		glVertex3f(gsize, 0.0, -gsize);
 		glTexCoord2f(0, 1);
 		glVertex3f(-gsize, 0.0, -gsize);
 	glEnd();
-
+	//glPopMatrix();
 
 	glDisable(GL_TEXTURE_2D);
 //---END---ground------------------
 
-//---START---road------------------
-	static GLfloat xyzRoad[] = { 4, 0.001, 0 };
-	glPushMatrix();
-		glTranslatef(xyzRoad[0], xyzRoad[1], xyzRoad[2]);
-		drawRoad(gsize, size);
-	glPopMatrix();
-
-//---END---road------------------
+////---START---road------------------
+//	static GLfloat xyzRoad[] = { 4, 0.05, gsize };
+//	glPushMatrix();
+//		glTranslatef(xyzRoad[0], xyzRoad[1], xyzRoad[2]);
+//		drawRoad(gsize, size);
+//	glPopMatrix();
+//
+////---END---road------------------
 
 //---START---car1----drive-----
 	GLfloat color_matCar[] = { 1.0,0.0,0.0,1.0 };
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_matCar);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, color_matCar);
 
-	static GLfloat xyzCar1[] = { 0,0,0 };
+	static GLfloat xyzCar1[] = { 0,0,gsize };
 	glPushMatrix();
 
-		if (xyzCar1[2] > 20)
-			xyzCar1[2] = 0;
+		if (xyzCar1[2] < -gsize)
+			xyzCar1[2] = gsize;
 
-		xyzCar1[2] += 0.01;
+		xyzCar1[2] -= 0.01;
 		glTranslatef(xyzRoad[0] + size*3/4 , 0.0, 0.0);		//начальный сдвиг 
-		glTranslatef(xyzCar1[0], xyzCar1[1], -xyzCar1[2]);		//координата машины
+		glTranslatef(xyzCar1[0], xyzCar1[1], xyzCar1[2]);		//координата машины
 		glRotatef(90, 0, 1, 0);
 		drawCar(size/5);
 	glPopMatrix();
@@ -1096,7 +1311,7 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 	glMaterialfv(GL_FRONT, GL_SPECULAR, color_matCar);
 
 	glPushMatrix();
-		if (xyzCar2[2] > 0)
+		if (xyzCar2[2] > gsize)
 			xyzCar2[2] = -gsize;
 
 		xyzCar2[2] += 0.01;
@@ -1109,95 +1324,115 @@ GLvoid DrawGLScene(float h_angle, float v_angle, float h_cam, float v_cam, float
 
 
 //---START---car3----drive-----
-	//static GLfloat xyzCar2[] = { 0,0,-gsize };
+	//static GLfloat xyzCar3[] = { 0,0,0 };
 	color_matCar[0] = 1.0;
 	color_matCar[1] = 0.0;
 	color_matCar[2] = 1.0;
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, color_matCar);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, color_matCar);
 
+	if (xCar > gsize-2)
+		xCar = gsize-2;
+
+	if (xCar < -gsize + 2)
+		xCar = -gsize + 2;
+
+	if (zCar > gsize - 2)
+		zCar = gsize - 2;
+
+	if (zCar < -gsize + 2)
+		zCar = -gsize + 2;
+
 	glPushMatrix();
 		//xyzCar2[2] += 0.01;
-		glTranslatef(0, 0.0, -9.0);		//начальный сдвиг 
-		glRotatef(-90, 0, 1, 0);
+	//glTranslatef(0, 0.0, 0);
+		glTranslatef(xCar, 0.0, zCar);		//начальный сдвиг 
+		if (prevCar==curCar)
+			glRotatef(prevCar, 0, 1, 0);
+		else
+			glRotatef(curCar-prevCar, 0, 1, 0);
 		drawCar(size);
+		prevCar = curCar;
 	glPopMatrix();
 	//---END---car3----drive-----
 
-//---START---snowman------------------
+////---START---snowman------------------
 	glPushMatrix();
-		glTranslatef(-4.5, 0.7, -9.0);		//начальный сдвиг 
+		glTranslatef(-4.5, 0.0, 4.0);		//начальный сдвиг 
 		glRotatef(stepman, 0, 1, 0);
-		
-		glTranslatef(1.0, -0.0, -0.0);		//начальный сдвиг 
-		//glTranslatef(1 * sin(stepman), -1.0*1 * cos(stepman), -9.0);		//начальный сдвиг 
-		glColor3f(0.746, 0.832, 0.797);
-		//GLfloat color_mat1[] = { 0.746, 0.832, 0.797,1.0 };
-		GLfloat color_mat1[] = { 0.5, 0.5, 0.5,1.0 };
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat1);
-		//glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat_specular);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat1);
-
-		//gluQuadricTexture(quadricObj, GL_TRUE);
-		//glEnable(GL_TEXTURE_2D);
-		//glBindTexture(GL_TEXTURE_2D, TextNames[SPACE]);
-		////glMaterialfv(GL_FRONT, GL_AMBIENT, glTexAmbientFlore);
-		////glMaterialfv(GL_FRONT, GL_DIFFUSE, glTexDiffuseFlore);
-		////glMaterialfv(GL_FRONT, GL_SPECULAR, glTexShineFlore);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
-		////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		//glutSolidSphere(0.7, 99, 99);
-		glPushMatrix();
-			glRotated(-90, 1, 0, 0);
-			gluSphere(quadricObj, 0.7, 16, 16);
-		glPopMatrix();
-		
-		//glDisable(GL_TEXTURE_2D);
-		
-		glPushMatrix();
-			glTranslatef(0.0, 1.15, 0.0);		//начальный сдвиг 
-			glColor3f(0.746, 0.832, 0.797);
-			glutSolidSphere(0.45, 99, 99);
-		glPopMatrix();
-
-		glPushMatrix();
-			glTranslatef(0.0, 1.9, 0.0);		//начальный сдвиг 
-			glColor3f(0.746, 0.832, 0.797);
-			glutSolidSphere(0.3, 99, 99);
-		glPopMatrix();
-
-		glPushMatrix();
-			glTranslatef(0.09, 1.95, 0.24);		//начальный сдвиг 
-			//glColor3f(0, 0, 0);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse_black);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular_black);
-			glutSolidSphere(0.05, 99, 99);
-		glPopMatrix();
-
-		glPushMatrix();
-			glTranslatef(-0.09, 1.95, 0.24);		//начальный сдвиг 
-			glColor3f(0, 0, 0);
-			glutSolidSphere(0.05, 99, 99);
-		glPopMatrix();
-
-		glPushMatrix();
-			//glScalef(TYPE kx, TYPE ky, TYPE kz);
-			glTranslatef(0.00, 1.85, 0.28);		//начальный сдвиг 
-			glColor3f(1, 0.549, 0);
-			GLfloat color_mat3[] = { 1.0,0.0,0.0,1.0 };
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat3);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat3);
-			gluQuadricDrawStyle(quadricObj, GLU_FILL);
-			gluCylinder(quadricObj, 0.05, 0, 0.15, 99, 99);
-		glPopMatrix();
-		//glRotatef(-stepman, 0, 1, 0);
+		glTranslatef(1.0, -0.0, -0.0);
+		drawSnowman(size);
+		//drawSnowman(1);
+//		
+//		glTranslatef(1.0, -0.0, -0.0);		//начальный сдвиг 
+//		//glTranslatef(1 * sin(stepman), -1.0*1 * cos(stepman), -9.0);		//начальный сдвиг 
+//		glColor3f(0.746, 0.832, 0.797);
+//		//GLfloat color_mat1[] = { 0.746, 0.832, 0.797,1.0 };
+//		GLfloat color_mat1[] = { 0.5, 0.5, 0.5,1.0 };
+//		glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat1);
+//		//glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat_specular);
+//		glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat1);
+//
+//		//gluQuadricTexture(quadricObj, GL_TRUE);
+//		//glEnable(GL_TEXTURE_2D);
+//		//glBindTexture(GL_TEXTURE_2D, TextNames[SPACE]);
+//		////glMaterialfv(GL_FRONT, GL_AMBIENT, glTexAmbientFlore);
+//		////glMaterialfv(GL_FRONT, GL_DIFFUSE, glTexDiffuseFlore);
+//		////glMaterialfv(GL_FRONT, GL_SPECULAR, glTexShineFlore);
+//		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR_MIPMAP_LINEAR);
+//		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR_MIPMAP_LINEAR);
+//		////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//		////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+//
+//		//glutSolidSphere(0.7, 99, 99);
+//		glPushMatrix();
+//			glRotated(-90, 1, 0, 0);
+//			gluSphere(quadricObj, 0.7, 16, 16);
+//		glPopMatrix();
+//		
+//		//glDisable(GL_TEXTURE_2D);
+//		
+//		glPushMatrix();
+//			glTranslatef(0.0, 1.15, 0.0);		//начальный сдвиг 
+//			glColor3f(0.746, 0.832, 0.797);
+//			glutSolidSphere(0.45, 99, 99);
+//		glPopMatrix();
+//
+//		glPushMatrix();
+//			glTranslatef(0.0, 1.9, 0.0);		//начальный сдвиг 
+//			glColor3f(0.746, 0.832, 0.797);
+//			glutSolidSphere(0.3, 99, 99);
+//		glPopMatrix();
+//
+//		glPushMatrix();
+//			glTranslatef(0.09, 1.95, 0.24);		//начальный сдвиг 
+//			//glColor3f(0, 0, 0);
+//			glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse_black);
+//			glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular_black);
+//			glutSolidSphere(0.05, 99, 99);
+//		glPopMatrix();
+//
+//		glPushMatrix();
+//			glTranslatef(-0.09, 1.95, 0.24);		//начальный сдвиг 
+//			glColor3f(0, 0, 0);
+//			glutSolidSphere(0.05, 99, 99);
+//		glPopMatrix();
+//
+//		glPushMatrix();
+//			//glScalef(TYPE kx, TYPE ky, TYPE kz);
+//			glTranslatef(0.00, 1.85, 0.28);		//начальный сдвиг 
+//			glColor3f(1, 0.549, 0);
+//			GLfloat color_mat3[] = { 1.0,0.0,0.0,1.0 };
+//			glMaterialfv(GL_FRONT, GL_DIFFUSE, color_mat3);
+//			glMaterialfv(GL_FRONT, GL_SPECULAR, color_mat3);
+//			gluQuadricDrawStyle(quadricObj, GLU_FILL);
+//			gluCylinder(quadricObj, 0.05, 0, 0.15, 99, 99);
+//		glPopMatrix();
+//		//glRotatef(-stepman, 0, 1, 0);
 	glPopMatrix();
-		//gluDeleteQuadric(quadricObj);
-//---END---snowman------------------
+//		//gluDeleteQuadric(quadricObj);
+////---END---snowman------------------
 
 //---START---telega----from-----function---------
 		//glTranslatef(-1.0, -0.0, -0.0);
@@ -1435,7 +1670,7 @@ LRESULT CALLBACK WndProc(HWND	hWnd,
 		glGenTextures(20, TextNames);
 
 		//Load Flore texture
-		for (int i = 0; i < 13; i++)
+		for (int i = 0; i < 14; i++)
 		{
 			ImRect1 = auxDIBImageLoad(TextureFiles[i]);
 			glBindTexture(GL_TEXTURE_2D, TextNames[i]);
@@ -1477,24 +1712,42 @@ LRESULT CALLBACK WndProc(HWND	hWnd,
 			v_angle -= 10.0;
 			break;
 		case 0x41: //key A
-			r_object += 5.0;
+			r_object -= 2.0;
 			break;
 		case 0x44: //key D
-			r_object -= 5.0;
+			r_object += 2.0;
+		break;
+		case 0x57: //key W
+			v_cam += 2.0;
 			break;
-			case 0x57: //key W
-				v_cam += 5.0;
-				break;
-			case 0x53: //key S
-				v_cam -= 5.0;
-				break;
+		case 0x53: //key S
+			v_cam -= 2.0;
+			break;
+
+		case 0x50: //key P
+			zCar -= 0.1;
+			curCar = 90;
+			break;
+		case VK_OEM_1: //key  ';:' 
+			zCar += 0.1;
+			curCar = 270;
+			break;
+		case 0x4C: //key L
+			xCar -= 0.1;
+			curCar = 180;
+			break;
+		case VK_OEM_7: //key ' " '
+			xCar += 0.1;
+			curCar = 0;
+			break;
+
 		case VK_OEM_PLUS:
-			_zoom -= 10.0;
-			if (_zoom < 10) _zoom = 10;
+			_zoom -= 5.0;
+			if (_zoom < 5) _zoom = 5;
 			break;
 		case VK_OEM_MINUS:
-			_zoom += 10.0;
-			if (_zoom > 170) _zoom = 170;
+			_zoom += 5.0;
+			if (_zoom > 175) _zoom = 175;
 			break;
 		default:
 			break;
