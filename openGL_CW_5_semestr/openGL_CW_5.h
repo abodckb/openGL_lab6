@@ -43,6 +43,6 @@ extern AUX_RGBImageRec* ImRect1;
 #define BRIKS1 8
 #define WOOD 9
 #define ROAD 10
-#define RAIN 11
+#define HEADGLASS 11
 #define RAIN1 12
 #define WINDOW1 13
